@@ -12,15 +12,17 @@ const requestListener = (request, response) => {
     }
 
     if (method == 'POST') {
-        response.end('<h1>Hai!</h1>');
-    }
+        let body = [];
 
-    if (method == 'PUT') {
-        response.end('<h1>Bonjour!</h1>');
-    }
+        request.on('data', (chunk) => {
+            body.push(chunk);
+        });
 
-    if (method == 'DELETE') {
-        response.end('<h1>Salam!</h1>');
+        request.on('end', () => {
+            body = Buffer.concat(body).toString();
+            const { name } = JSON.parse(body);
+            response.end(`<h1>Hai, ${name}</h1>`);
+        });
     }
 }
 
@@ -31,5 +33,5 @@ const port = 5000;
 const host = 'localhost';
 
 server.listen(port, host, () => {
-    console.log(`server berjalan pada http://${host}:${port}`)
-})
+    console.log(`Server berjalan pada http://${host}:${port}`);
+});

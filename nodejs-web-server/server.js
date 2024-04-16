@@ -4,27 +4,54 @@ const requestListener = (request, response) => {
     response.setHeader('Content-Type', 'text/html');
     response.StatusCode = 200;
 
+    const { method, url } = request;
 
-    const { method } = request;
+    // if (method == 'GET') {
+    //     response.end('<h1>Hello</h1>');
+    // }
 
-    if (method == 'GET') {
-        response.end('<h1>Hello</h1>');
-    }
+    // if (method == 'POST') {
+    //     let body = [];
 
-    if (method == 'POST') {
-        let body = [];
+    //     request.on('data', (chunk) => {
+    //         body.push(chunk);
+    //     });
 
-        request.on('data', (chunk) => {
-            body.push(chunk);
-        });
+    //     request.on('end', () => {
+    //         body = Buffer.concat(body).toString();
+    //         const { name } = JSON.parse(body);
+    //         response.end(`<h1>Hai, ${name}</h1>`);
+    //     });
 
-        request.on('end', () => {
-            body = Buffer.concat(body).toString();
-            const { name } = JSON.parse(body);
-            response.end(`<h1>Hai, ${name}</h1>`);
-        });
+    if (url === '/') {
+        if (method === 'GET') {
+            response.end('<h1>Halo! ini adalah halaman Homepage</h1>');
+
+        } else {
+            response.end('<h1>Halaman tidak dapat diakses dengan  request</h1>');
+        }
+    } else if (url === '/about') {
+        if (method === 'GET') {
+            response.end('<h1>Halo! ini adalah halaman about</h1>');
+        } else if (method === 'POST') {
+            let body = []
+            request.on('data', (chunk) => {
+                body.push(chunk);
+            });
+            response.on('end', () => {
+                body = Buffer.concat(body).toString();
+                const { name } = JSON.parse(body);
+                response.end(`<h1>Hai, ${name}! ini adalah halaman about</h1>`);
+            })
+        } else {
+            response.end(`<h1>Halaman tidak dapat di akses menggunakan ${method} </h1>`);
+        }
+    } else {
+        response.end('<h1>Halaman tidak ditemukan!</h1>');
     }
 }
+
+
 
 
 const server = http.createServer(requestListener);
